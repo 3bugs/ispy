@@ -14,18 +14,24 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
           children: [
             Text(
-              'iSpy',
+              'I SPY',
               style: GoogleFonts.kanit(
                 fontWeight: FontWeight.bold,
                 fontSize: 60,
               ),
             ),
             Expanded(child: Image.asset('assets/images/kids.png')),
-            CircularProgressIndicator(strokeWidth: 5),
+            const CircularProgressIndicator(strokeWidth: 5),
             Text(
               ' ',
               style: GoogleFonts.kanit(
@@ -35,22 +41,22 @@ class _SplashPageState extends State<SplashPage> {
             ),
           ],
         ),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage('assets/images/bg.jpg'),
-          fit: BoxFit.cover,
-        )),
       ),
     );
   }
 
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    });
+    super.initState();
+
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      },
+    );
   }
 }
