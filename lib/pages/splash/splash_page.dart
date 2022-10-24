@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ispy/pages/home/home_page.dart';
 
@@ -6,7 +7,7 @@ class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
 
   @override
-  _SplashPageState createState() => _SplashPageState();
+  State<SplashPage> createState() => _SplashPageState();
 }
 
 class _SplashPageState extends State<SplashPage> {
@@ -25,7 +26,7 @@ class _SplashPageState extends State<SplashPage> {
           children: [
             Text(
               'I SPY',
-              style: GoogleFonts.kanit(
+              style: GoogleFonts.sriracha(
                 fontWeight: FontWeight.bold,
                 fontSize: 60,
               ),
@@ -34,7 +35,7 @@ class _SplashPageState extends State<SplashPage> {
             const CircularProgressIndicator(strokeWidth: 5),
             Text(
               ' ',
-              style: GoogleFonts.kanit(
+              style: GoogleFonts.sriracha(
                 fontWeight: FontWeight.bold,
                 fontSize: 60,
               ),
@@ -49,6 +50,11 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
 
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
+
     Future.delayed(
       const Duration(seconds: 3),
       () {
@@ -58,5 +64,17 @@ class _SplashPageState extends State<SplashPage> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    super.dispose();
   }
 }

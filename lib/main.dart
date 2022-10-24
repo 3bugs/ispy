@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ispy/data/words.dart';
-import 'package:ispy/pages/home/home_page.dart';
 import 'package:ispy/pages/splash/splash_page.dart';
-import 'package:ispy/pages/test/test_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +20,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const SplashPage(),
     );
   }
 }

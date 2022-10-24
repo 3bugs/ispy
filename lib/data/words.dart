@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 class Words {
   final Map<String, List<String>> alphabetMap = {};
@@ -15,7 +16,9 @@ class Words {
         .where((String key) => key.startsWith('assets/quiz_images'))
         .toList();
     images.forEach((String path) {
-      print(path);
+      if (kDebugMode) {
+        print(path);
+      }
       var tmp = path.replaceAll('assets/quiz_images/', '');
       var part = tmp.split('/');
       var alphabet = part[0];

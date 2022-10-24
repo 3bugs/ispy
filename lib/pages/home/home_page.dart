@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
@@ -42,24 +42,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
       _controllerList.add(controller);
 
+      var curveList = [Curves.easeInOut, Curves.easeInBack, Curves.ease];
       var animation = Tween<double>(
         begin: 0.0,
         end: Random().nextInt(5) * 0.1 + 0.25,
-      ).animate(_controllerList[i])
+      ).animate(CurvedAnimation(
+        parent: controller,
+        curve: curveList[Random().nextInt(curveList.length)],
+      ))
         ..addListener(() {
-          //setState(() {});
+          setState(() {});
         })
         ..addStatusListener((status) {
           if (status == AnimationStatus.completed) {
-            _controllerList[i].reverse();
+            controller.reverse();
           } else if (status == AnimationStatus.dismissed) {
-            _controllerList[i].forward();
-            _rotateDirectionList[i] *= -1;
+            controller.forward();
+            _rotateDirectionList[i] *= Random().nextInt(2) == 0 ? 1 : -1;
           }
         });
 
       _animationList.add(animation);
-      _controllerList[i].forward();
+      controller.forward();
     }
   }
 
