@@ -35,14 +35,14 @@ class Words {
   }
 
   List<String> randomChoice(String alphabet) {
-    // สุ่ม choice ที่เป็นคำตอบ
+    // สุ่ม choice ที่เป็นคำตอบ (1 choice)
     var answer =
         alphabetMap[alphabet]![Random().nextInt(alphabetMap[alphabet]!.length)];
     List<String> choiceList = [];
     choiceList.add(answer);
 
     List<String> tmpList = [];
-    // สุ่ม choice ที่เป็นตัวหลอก
+    // สุ่ม choice ที่เป็นตัวหลอก (4 choice)
     alphabetMap.forEach((key, value) {
       if (key != alphabet) {
         tmpList.addAll(value);
@@ -52,6 +52,7 @@ class Words {
     choiceList.add(tmpList[0]);
     choiceList.add(tmpList[1]);
     choiceList.add(tmpList[2]);
+    choiceList.add(tmpList[3]);
 
     choiceList.shuffle();
     return choiceList;
