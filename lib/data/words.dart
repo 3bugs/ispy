@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ispy/models/quiz_model.dart';
 
 class Words {
   final Map<String, List<String>> alphabetMap = {};
@@ -32,9 +33,16 @@ class Words {
   }
 
   String randomAlphabet() {
-    return alphabetMap.keys
-        .elementAt(Random().nextInt(alphabetMap.length))
-        .toLowerCase();
+    String randomAlphabet;
+    do {
+      randomAlphabet = alphabetMap.keys
+          .elementAt(Random().nextInt(alphabetMap.length))
+          .toLowerCase();
+    } while (QuizModel.solvedAlphabetList
+        .where((alphabetModel) => alphabetModel.alphabet == randomAlphabet)
+        .isNotEmpty);
+
+    return randomAlphabet;
   }
 
   List<String> randomChoice(String alphabet) {
@@ -59,5 +67,9 @@ class Words {
 
     choiceList.shuffle();
     return choiceList;
+  }
+
+  int getNumAlphabet() {
+    return alphabetMap.keys.length;
   }
 }

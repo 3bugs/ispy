@@ -1,9 +1,12 @@
+import 'package:ispy/models/alphabet_model.dart';
+
 class QuizModel {
   final String alphabet;
   final String alphabetImage;
   final List<String> choiceList = [];
   final List<bool> visibleList = [];
   bool solved = false;
+  static List<AlphabetModel> solvedAlphabetList = [];
 
   QuizModel(this.alphabet, this.alphabetImage);
 
