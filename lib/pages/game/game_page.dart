@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ispy/data/words.dart';
 import 'package:ispy/models/alphabet_model.dart';
@@ -22,6 +23,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   final List<double> _randomValueList = [];
   final List<Animation> _animationList = [];
   var _currentSolutionIndex = -1;
+  var _flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/bg2.jpg'),
+            image: AssetImage('assets/images/bg_game.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -181,17 +183,17 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    _buildNavButton(0),
-                    _buildNavButton(1),
-                    _buildNavButton(2),
-                  ],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildNavButton(0),
+                  _buildNavButton(1),
+                  _buildNavButton(2),
+                ],
               ),
+              _buildNavButton(4),
               _buildNavButton(3),
             ],
           ),
@@ -209,7 +211,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
             : 'assets/images/ic_back_on.png';
         break;
       case 1:
-        image = 'assets/images/ic_home_3.png';
+        image = 'assets/images/ic_home.png';
         break;
       case 2:
         image = _currentSolutionIndex == QuizModel.solvedAlphabetList.length - 1
@@ -220,6 +222,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         image = _words.getNumAlphabet() == QuizModel.solvedAlphabetList.length
             ? 'assets/images/ic_new_quiz_off.png'
             : 'assets/images/ic_new_quiz_on.png';
+        break;
+      case 4: // play sound (TTS)
+        image = 'assets/images/ic_sound.png';
         break;
     }
     return Padding(
@@ -257,9 +262,12 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                 newQuiz();
               }
               break;
+            case 4: // play sound (TTS)
+              _playTtsSound();
+              break;
           }
         },
-        child: Image.asset(image, width: 80.0),
+        child: Image.asset(image, width: 100.0), // ขนาดปุ่ม
       ),
     );
   }
@@ -333,6 +341,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                 ),
               );
               _currentSolutionIndex = QuizModel.solvedAlphabetList.length - 1;
+
+              _playTtsSound();
+
               debugPrint('Solved alphabets: ${QuizModel.solvedAlphabetList}');
             } else {
               //_feedback = 'Sorry, please try again.';
@@ -374,5 +385,16 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       _quizModel!.visibleList
           .addAll(List<bool>.filled(choiceList.length, true));
     });
+  }
+
+  Future<void> _playTtsSound() async {
+    /*var defaultVoice = await _flutterTts.getDefaultVoice;
+    print(defaultVoice);*/
+
+    //await _flutterTts.setVoice({"name": "Karen"});
+    var msg =
+        '${QuizModel.solvedAlphabetList[_currentSolutionIndex].alphabet.toUpperCase()} is for ${QuizModel.solvedAlphabetList[_currentSolutionIndex].alphabet.toUpperCase()}${QuizModel.solvedAlphabetList[_currentSolutionIndex].word.toUpperCase().substring(1)}';
+    // play sound (TTS)
+    _flutterTts.speak(msg);
   }
 }
