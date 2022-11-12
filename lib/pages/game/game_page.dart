@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ispy/data/words.dart';
+import 'package:ispy/etc/utils.dart';
 import 'package:ispy/models/alphabet_model.dart';
 import 'package:ispy/models/quiz_model.dart';
 
@@ -29,10 +30,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    SystemChrome.setPreferredOrientations([
+    /*SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
-    ]);
+    ]);*/
 
     init();
 
@@ -73,12 +74,12 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
+    /*SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
-    ]);
+    ]);*/
 
     for (var controller in _controllerList) {
       controller.dispose();
@@ -219,9 +220,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
             : 'assets/images/ic_forward_on.png';
         break;
       case 3:
-        image = _words.getNumAlphabet() == QuizModel.solvedAlphabetList.length
+        image = 'assets/images/ic_new_quiz_on.png';
+        /*image = _words.getNumAlphabet() == QuizModel.solvedAlphabetList.length
             ? 'assets/images/ic_new_quiz_off.png'
-            : 'assets/images/ic_new_quiz_on.png';
+            : 'assets/images/ic_new_quiz_on.png';*/
         break;
       case 4: // play sound (TTS)
         image = 'assets/images/ic_sound.png';
@@ -260,6 +262,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               if (_words.getNumAlphabet() !=
                   QuizModel.solvedAlphabetList.length) {
                 newQuiz();
+              } else {
+                openUrl('https://www.google.com/');
               }
               break;
             case 4: // play sound (TTS)
@@ -267,7 +271,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               break;
           }
         },
-        child: Image.asset(image, width: 100.0), // ขนาดปุ่ม
+        child: Image.asset(image, width: 80.0), // ขนาดปุ่ม
       ),
     );
   }
@@ -395,6 +399,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     var msg =
         '${QuizModel.solvedAlphabetList[_currentSolutionIndex].alphabet.toUpperCase()} is for ${QuizModel.solvedAlphabetList[_currentSolutionIndex].alphabet.toUpperCase()}${QuizModel.solvedAlphabetList[_currentSolutionIndex].word.toUpperCase().substring(1)}';
     // play sound (TTS)
-    _flutterTts.speak(msg);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setSpeechRate(0.3);
+    await _flutterTts.speak(msg);
   }
 }

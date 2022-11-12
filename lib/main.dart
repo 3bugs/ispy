@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ispy/pages/home/home_page.dart';
+import 'package:ispy/pages/splash/splash_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,5 +24,15 @@ class _MyAppState extends State<MyApp> {
       ),
       home: const HomePage(),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
   }
 }
