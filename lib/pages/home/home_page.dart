@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ispy/etc/utils.dart';
 import 'package:ispy/pages/game/game_page.dart';
 
@@ -58,6 +59,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   var _popupTitle = '';
   var _popupText = '';
 
+  late InterstitialAd _interstitialAd;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,13 +84,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const GamePage()),
-                          );
-                        },
+                        onTap: _handleClickPlay,
                         child: SizedBox(
                           height: 160.0,
                           width: 160.0,
@@ -259,6 +256,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     _controller.forward();
     playBackgroundMusic();
+
+    InterstitialAd.load(
+        adUnitId: 'ca-app-pub-3940256099942544/1033173712',
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+
+            // ผูก callback เพื่อกำหนดโค้ดในอีเวนต์ต่างๆของโฆษณา
+            ad.fullScreenContentCallback =
+                FullScreenContentCallback(
+                  onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                      debugPrint('%ad onAdShowedFullScreenContent.'),
+                  onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                    debugPrint('$ad onAdDismissedFullScreenContent.');
+                    //ad.dispose();
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const GamePage()),
+                    );
+                  },
+                  onAdFailedToShowFullScreenContent:
+                      (InterstitialAd ad, AdError error) {
+                    debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+                    ad.dispose();
+                  },
+                  onAdImpression: (InterstitialAd ad) =>
+                      debugPrint('$ad impression occurred.'),
+                );
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
   }
 
   @override
@@ -271,5 +304,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _audioPlayer.setReleaseMode(ReleaseMode.loop);
     _audioPlayer.setVolume(0.1);
     await _audioPlayer.play(AssetSource('sounds/bg2.mp3'));
+  }
+
+  void _handleClickPlay() {
+    // แสดงโฆษณา
+    _interstitialAd.show();
+
+    /*Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const GamePage()),
+    );*/
   }
 }

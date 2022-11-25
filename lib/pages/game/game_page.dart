@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ispy/data/words.dart';
 import 'package:ispy/etc/utils.dart';
 import 'package:ispy/models/alphabet_model.dart';
 import 'package:ispy/models/quiz_model.dart';
+import 'package:ispy/pages/home/home_page.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({Key? key}) : super(key: key);
@@ -25,11 +27,57 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   var _currentSolutionIndex = -1;
   final _flutterTts = FlutterTts();
 
+  late InterstitialAd _interstitialAd;
+  late int _adsCountDown;
+
+  _randomAdsCountDown() {
+    _adsCountDown = Random().nextInt(2) + 1;
+  }
+
+  _initAds() {
+    InterstitialAd.load(
+        adUnitId: 'ca-app-pub-3940256099942544/1033173712',
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+
+            // ผูก callback เพื่อกำหนดโค้ดในอีเวนต์ต่างๆของโฆษณา
+            ad.fullScreenContentCallback =
+                FullScreenContentCallback(
+                  onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                      debugPrint('%ad onAdShowedFullScreenContent.'),
+                  onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                    debugPrint('$ad onAdDismissedFullScreenContent.');
+                    //ad.dispose();
+
+                    _handleNewQuiz();
+                    _initAds();
+                  },
+                  onAdFailedToShowFullScreenContent:
+                      (InterstitialAd ad, AdError error) {
+                    debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
+                    ad.dispose();
+                  },
+                  onAdImpression: (InterstitialAd ad) =>
+                      debugPrint('$ad impression occurred.'),
+                );
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
   @override
   void initState() {
     super.initState();
 
     init();
+
+    _randomAdsCountDown();
+    _initAds();
 
     for (var i = 0; i < 5; i++) {
       _rotateDirectionList.add(1);
@@ -246,12 +294,15 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               });
               break;
             case 3:
-              if (_words.getNumAlphabet() !=
-                  QuizModel.solvedAlphabetList.length) {
-                newQuiz();
+              _adsCountDown--;
+              if (_adsCountDown == 0) {
+                // แสดง ads
+                _interstitialAd!.show();
+                _randomAdsCountDown();
               } else {
-                openUrl('https://www.google.com/');
+                _handleNewQuiz();
               }
+
               break;
             case 4: // play sound (TTS)
               _playTtsSound();
@@ -361,6 +412,15 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   void init() async {
     await _words.loadMapFromAssets(context);
     newQuiz();
+  }
+
+  void _handleNewQuiz() {
+    if (_words.getNumAlphabet() !=
+        QuizModel.solvedAlphabetList.length) {
+      newQuiz();
+    } else {
+      openUrl('https://www.google.com/');
+    }
   }
 
   void newQuiz() {
