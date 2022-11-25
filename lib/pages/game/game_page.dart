@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ispy/data/words.dart';
@@ -24,16 +23,11 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   final List<double> _randomValueList = [];
   final List<Animation> _animationList = [];
   var _currentSolutionIndex = -1;
-  var _flutterTts = FlutterTts();
+  final _flutterTts = FlutterTts();
 
   @override
   void initState() {
     super.initState();
-
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);*/
 
     init();
 
@@ -74,13 +68,6 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);*/
-
     for (var controller in _controllerList) {
       controller.dispose();
     }

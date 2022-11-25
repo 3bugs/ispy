@@ -29,17 +29,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final _audioPlayer = AudioPlayer();
+
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 800),
     vsync: this,
-  )..repeat(reverse: true);
+  );
+
+  var _firstAnimLoop = true;
   late final Animation<double> _animation = Tween<double>(
-    begin: 0.7,
+    begin: 0.6,
     end: 1.0,
   ).animate(CurvedAnimation(
     parent: _controller,
     curve: Curves.elasticOut,
-  ));
+  ))
+    ..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        var delay = _firstAnimLoop ? 0 : 2000;
+        _firstAnimLoop = false;
+        Future.delayed(
+            Duration(milliseconds: delay), () => _controller.reverse());
+      } else if (status == AnimationStatus.dismissed) {
+        _controller.forward();
+      }
+    });
+
   var _showPopup = false;
   var _popupTitle = '';
   var _popupText = '';
@@ -243,23 +257,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);*/
-
+    _controller.forward();
     playBackgroundMusic();
   }
 
   @override
   void dispose() {
-    /*SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);*/
-
     _controller.dispose();
     super.dispose();
   }
