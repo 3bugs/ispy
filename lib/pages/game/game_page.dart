@@ -50,7 +50,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       debugPrint('%ad onAdShowedFullScreenContent.'),
                   onAdDismissedFullScreenContent: (InterstitialAd ad) {
                     debugPrint('$ad onAdDismissedFullScreenContent.');
-                    //ad.dispose();
+                    ad.dispose();
 
                     _handleNewQuiz();
                     _initAds();

@@ -272,7 +272,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       debugPrint('%ad onAdShowedFullScreenContent.'),
                   onAdDismissedFullScreenContent: (InterstitialAd ad) {
                     debugPrint('$ad onAdDismissedFullScreenContent.');
-                    //ad.dispose();
+                    ad.dispose();
 
                     Navigator.push(
                       context,
